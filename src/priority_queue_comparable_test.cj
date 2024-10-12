@@ -2,6 +2,8 @@ package priorityqueue4cj
 
 import std.unittest.*
 import std.unittest.testmacro.*
+import std.collection.*
+import std.random.*
 
 @Test
 class PriorityQueueTest {
@@ -81,5 +83,33 @@ class PriorityQueueTest {
         @Expect(pq.pop(), Some(3))
         @Expect(pq.pop(), Some(1))
         @Expect(pq.empty())
+    }
+
+    @TestCase
+    func test_random() {
+        let pq = PriorityQueue<Int64>.create<Int64>()
+        let list = ArrayList<Int64>()
+        for (i in 0..10000) {
+            list.append(i)
+        }
+        list.shuffle()
+        for (i in 0..10000) {
+            pq.push(list[i])
+        }
+        for (i in 0..10000) {
+            @Expect(pq.pop(), Some(9999 - i))
+        }
+    }
+}
+
+extend ArrayList<Int64> {
+    func shuffle() {
+        let random = Random()
+        for (i in 0..size) {
+            let j = i + random.nextInt64(size - i)
+            let tmp = this[i]
+            this[i] = this[j]
+            this[j] = tmp
+        }
     }
 }

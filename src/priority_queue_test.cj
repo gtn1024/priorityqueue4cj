@@ -102,6 +102,56 @@ class PriorityQueueTest {
     }
 }
 
+@Test
+class PriorityQueueComparatorTest {
+    @TestCase
+    func test_push_pop() {
+        let pq = PriorityQueue<Int64>.create<Int64>({ a, b =>
+            if (a < b) {
+                Ordering.GT
+            } else if (a > b) {
+                Ordering.LT
+            } else {
+                Ordering.EQ
+            }
+        })
+        pq.push(1)
+        pq.push(2)
+        pq.push(3)
+
+        @Expect(pq.size, 3)
+
+        @Expect(pq.pop(), Some(1))
+        @Expect(pq.pop(), Some(2))
+        @Expect(pq.pop(), Some(3))
+        @Expect(pq.pop(), None)
+    }
+
+    @TestCase
+    func test_random() {
+        let pq = PriorityQueue<Int64>.create<Int64>({ a, b =>
+            if (a < b) {
+                Ordering.GT
+            } else if (a > b) {
+                Ordering.LT
+            } else {
+                Ordering.EQ
+            }
+        })
+        let list = ArrayList<Int64>()
+        for (i in 0..10000) {
+            list.append(i)
+        }
+        list.shuffle()
+        for (i in 0..10000) {
+            pq.push(list[i])
+        }
+        for (i in 0..10000) {
+            @Expect(pq.pop(), Some(i))
+        }
+    }
+}
+
 extend ArrayList<Int64> {
     func shuffle() {
         let random = Random()
